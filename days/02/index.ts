@@ -1,6 +1,4 @@
 // Prompt https://adventofcode.com/2022/day/2
-const fs = require('fs')
-
 /**
  * Letter | Action | Score Value
  * A, X  -> Rock   -> 1
@@ -19,6 +17,8 @@ const fs = require('fs')
  * -------------------------------
  * Total = 15
  */
+
+const fs = require('fs')
 
 let input: string[]
 input = fs.readFileSync('input.txt', { encoding: 'utf-8' }).split('\n')
@@ -77,6 +77,3 @@ input.forEach((match) => {
 })
 
 console.log(score)
-
-// 13264
-// 15702
