@@ -21,7 +21,7 @@ const fs = require('fs')
  */
 
 let input: string[]
-input = fs.readFileSync('test.txt', { encoding: 'utf-8' }).split('\n')
+input = fs.readFileSync('input.txt', { encoding: 'utf-8' }).split('\n')
 
 enum Action {
   A = 'ROCK',
@@ -32,8 +32,8 @@ enum Action {
   Z = 'SCISSORS',
 }
 
-type PlayerAction = 'A' | 'B' | 'C'
-type OpponentAction = 'Y' | 'X' | 'Z'
+type OpponentAction = 'A' | 'B' | 'C'
+type PlayerAction = 'X' | 'Y' | 'Z'
 
 enum Score {
   W = 6,
@@ -48,8 +48,8 @@ const valueMap: Map<Action, number> = new Map([
 ])
 
 const determineOutcome = (
-  playerAction: PlayerAction,
-  opponentAction: OpponentAction
+  opponentAction: OpponentAction,
+  playerAction: PlayerAction
 ): Score => {
   // Draw
   if (Action[playerAction] === Action[opponentAction]) {
@@ -57,24 +57,22 @@ const determineOutcome = (
   } else if (Action[playerAction] !== Action[opponentAction]) {
     // Win
     if (
-      (playerAction === 'A' && opponentAction === 'Z') ||
-      (playerAction === 'B' && opponentAction === 'X') ||
-      (playerAction === 'C' && opponentAction === 'Y')
+      (playerAction === 'X' && opponentAction === 'C') ||
+      (playerAction === 'Y' && opponentAction === 'A') ||
+      (playerAction === 'Z' && opponentAction === 'B')
     ) {
       return Score.W
-    } // Loss
-    else return Score.L
+    }
   }
-
-  throw new Error()
+  return Score.L
 }
 
 let score: number = 0
 input.forEach((match) => {
-  let playerAction: PlayerAction = match[0] as PlayerAction
   let opponentAction: OpponentAction = match[0] as OpponentAction
+  let playerAction: PlayerAction = match[match.length - 1] as PlayerAction
 
-  score += determineOutcome(playerAction, opponentAction)!
+  score += determineOutcome(opponentAction, playerAction)
   score += valueMap.get(Action[playerAction])! // Maps in TypeScript can possibly be undefined, for a script this simple though, it's safe to use a bang to insist that valueMap will have the numbers set as expected
 })
 
