@@ -49,6 +49,31 @@ const parseRange = (range: string): Scope => {
   return scope
 }
 
+const rangeInRange = (range1: Scope, range2: Scope): boolean => {
+  if (range1.difference !== 0 && range2.difference !== 0) {
+    if (
+      (range1.min >= range2.min && range1.max <= range2.max) || // is first range contained in the second
+      (range2.min >= range1.min && range2.max <= range1.max) // or is the second range contained in the first?
+    ) {
+      return true
+    }
+  } else if (range1.difference === 0) {
+    // Using the min or max doesn't matter here, as a range of 0 indicates they're the same number
+    if (range1.min >= range2.min && range1.min <= range2.max) {
+      return true
+    }
+  } else if (range2.difference === 0) {
+    if (range2.min >= range1.min && range2.min <= range1.max) {
+      return true
+    }
+  }
+  return false
+}
+
+const inRange = (num: number, min: number, max: number) => {
+  return num >= min && num <= max
+}
+
 let overlapCount: number = 0
 
 for (let i: number = 0; i < input.length; i++) {
@@ -56,22 +81,24 @@ for (let i: number = 0; i < input.length; i++) {
   let range1 = parseRange(input[i].substring(0, input[i].indexOf(',')))
   let range2 = parseRange(input[i].substring(input[i].indexOf(',') + 1))
 
-  if (range1.difference !== 0 && range2.difference !== 0) {
-    if (
-      (range1.min >= range2.min && range1.max <= range2.max) || // is first range contained in the second
-      (range2.min >= range1.min && range2.max <= range1.max) // or is the second range contained in the first?
-    ) {
-      overlapCount++
-    }
-  } else if (range1.difference === 0) {
-    // Using the min or max doesn't matter here, as a range of 0 indicates they're the same number
-    if (range1.min >= range2.min && range1.min <= range2.max) {
-      overlapCount++
-    }
-  } else if (range2.difference === 0) {
-    if (range2.min >= range1.min && range2.min <= range1.max) {
-      overlapCount++
-    }
+  // Part 1
+  // if (rangeInRange(range1, range2)) {
+  //   overlapCount++
+  // }
+
+  // Part 2
+  if (rangeInRange(range1, range2)) {
+    overlapCount++
+  } else if (
+    inRange(range1.min, range2.min, range2.max) ||
+    inRange(range1.max, range2.min, range2.max)
+  ) {
+    overlapCount++
+  } else if (
+    inRange(range2.min, range1.min, range1.max) ||
+    inRange(range2.max, range1.min, range1.max)
+  ) {
+    overlapCount++
   }
 }
 
