@@ -49,6 +49,7 @@ const parseRange = (range: string): Scope => {
   return scope
 }
 
+// Part 1
 const rangeInRange = (range1: Scope, range2: Scope): boolean => {
   if (range1.difference !== 0 && range2.difference !== 0) {
     if (
@@ -70,8 +71,22 @@ const rangeInRange = (range1: Scope, range2: Scope): boolean => {
   return false
 }
 
-const inRange = (num: number, min: number, max: number) => {
-  return num >= min && num <= max
+// Part 2
+const inRange = (num: number, range: Scope) => {
+  return num >= range.min && num <= range.max
+}
+
+const part2 = (range1: Scope, range2: Scope): boolean => {
+  // If either range is contained within the other (from part 1), then there is overlap
+  if (rangeInRange(range1, range2)) {
+    return true
+  } else if (inRange(range1.min, range2) || inRange(range1.max, range2)) {
+    return true
+  } else if (inRange(range2.min, range1) || inRange(range2.max, range1)) {
+    return true
+  }
+
+  return false
 }
 
 let overlapCount: number = 0
@@ -86,18 +101,7 @@ for (let i: number = 0; i < input.length; i++) {
   //   overlapCount++
   // }
 
-  // Part 2
-  if (rangeInRange(range1, range2)) {
-    overlapCount++
-  } else if (
-    inRange(range1.min, range2.min, range2.max) ||
-    inRange(range1.max, range2.min, range2.max)
-  ) {
-    overlapCount++
-  } else if (
-    inRange(range2.min, range1.min, range1.max) ||
-    inRange(range2.max, range1.min, range1.max)
-  ) {
+  if (part2(range1, range2)) {
     overlapCount++
   }
 }
