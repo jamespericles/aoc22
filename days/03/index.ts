@@ -30,26 +30,66 @@ for (let i: number = 0; i < alph.length; i++) {
   priorities.set(alph[i], i + 1)
 }
 
-const findRepeat = (str1: string, str2: string): string => {
+const findRepeat = (
+  str1: string,
+  str2: string,
+  str3: string | null
+): string => {
   const set1 = new Set(str1.split(''))
   const set2 = new Set(str2.split(''))
+  const set3 = str3 ? new Set(str3.split('')) : null
   let common: string = ''
 
-  for (let char of set1.values()) {
-    if (set2.has(char)) {
-      common = char
+  // Handle part 1
+  if (!str3) {
+    for (let char of set1.values()) {
+      if (set2.has(char)) {
+        common = char
+      }
+    }
+  }
+
+  // Handle part 2
+  if (str3) {
+    for (let char of set1.values()) {
+      if (set2.has(char) && set3?.has(char)) {
+        common = char
+      }
     }
   }
 
   return common
 }
 
-let accumulator: number = 0
-for (let i: number = 0; i < input.length; i++) {
-  let middle: number = input[i].length / 2
-  let firstHalf: string = input[i].substring(0, middle)
-  let secondHalf: string = input[i].substring(middle, input[i].length)
+const part1 = (input: string[]): number => {
+  let accumulator: number = 0
+  for (let i: number = 0; i < input.length; i++) {
+    let middle: number = input[i].length / 2
+    let firstHalf: string = input[i].substring(0, middle)
+    let secondHalf: string = input[i].substring(middle, input[i].length)
 
-  accumulator += priorities.get(findRepeat(firstHalf, secondHalf))!
+    accumulator += priorities.get(findRepeat(firstHalf, secondHalf, null))!
+  }
+
+  console.log('Part 1', accumulator)
+  return accumulator
 }
-console.log(accumulator)
+
+part1(input)
+
+const part2 = (input: string[]): number => {
+  let accumulator: number = 0
+
+  for (let i: number = 0; i < input.length; i += 3) {
+    let firstElf: string = input[i]
+    let secondElf: string = input[i + 1]
+    let thirdElf: string = input[i + 2]
+
+    accumulator += priorities.get(findRepeat(firstElf, secondElf, thirdElf))!
+  }
+
+  console.log('Part 2', accumulator)
+  return accumulator
+}
+
+part2(input)
