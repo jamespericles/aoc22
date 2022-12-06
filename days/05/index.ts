@@ -130,27 +130,10 @@ for (let i: number = 0; i < input.length; i++) {
 
   let j: number = quantity
   while (j) {
-    if (stacks[origin].size() !== 0) {
-      stacks[destination]?.push(stacks[origin]?.pop()!)
-    }
+    stacks[destination + 1]?.push(stacks[origin + 1]?.pop()!)
     j--
   }
 }
-
-// stacks[7].push(stacks[3].pop())
-// stacks[7].push(stacks[3].pop())
-// stacks[7].push(stacks[3].pop())
-
-// stacks[9].push(stack[1].pop())
-// stacks[9].push(stacks[1].pop())
-// stacks[9].push(stacks[1].pop())
-// stacks[9].push(stacks[1].pop())
-
-// stacks[3].push(stacks[6].pop())
-// stacks[3].push(stacks[6].pop())
-// stacks[3].push(stacks[6].pop())
-// stacks[3].push(stacks[6].pop())
-// stacks[3].push(stacks[6].pop())
 
 let topStacks: string = ''
 
