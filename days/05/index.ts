@@ -28,12 +28,6 @@ interface StackInterface<T> {
   init(inventory: T): void
 }
 
-interface Moves {
-  quantity: number | null
-  origin: number | null
-  destination: number | null
-}
-
 // The bottom of the stack is the zeroth index
 // repeat count?
 class Stack<T> implements StackInterface<T> {
@@ -73,6 +67,7 @@ class Stack<T> implements StackInterface<T> {
   }
 }
 
+const stacks: Stack<string>[] = []
 // Initiate each of our stacks with the order given from our input
 const stack1 = new Stack<string>()
 stack1.init('RNPG')
@@ -81,49 +76,86 @@ const stack2 = new Stack<string>()
 stack2.init('TJBLCSVH')
 
 const stack3 = new Stack<string>()
-stack2.init('TDBMNL')
+stack3.init('TDBMNL')
 
 const stack4 = new Stack<string>()
-stack2.init('RVPSB')
+stack4.init('RVPSB')
 
 const stack5 = new Stack<string>()
-stack2.init('GCQSWMVH')
+stack5.init('GCQSWMVH')
 
 const stack6 = new Stack<string>()
-stack2.init('WQSCDBJ')
+stack6.init('WQSCDBJ')
 
 const stack7 = new Stack<string>()
-stack2.init('FQL')
+stack7.init('FQL')
 
 const stack8 = new Stack<string>()
-stack2.init('WMHTDLFV')
+stack8.init('WMHTDLFV')
 
 const stack9 = new Stack<string>()
-stack2.init('LPBVMJF')
+stack9.init('LPBVMJF')
+
+stacks.push(
+  stack1,
+  stack2,
+  stack3,
+  stack4,
+  stack5,
+  stack6,
+  stack7,
+  stack8,
+  stack9
+)
 
 const moveRegex = /move (\d+) from (\d+) to (\d+)/
 
 for (let i: number = 0; i < input.length; i++) {
-  let moves: Moves = {
-    quantity: null,
-    origin: null,
-    destination: null,
-  }
+  let quantity: number = 0
+  let origin: number = 0
+  let destination: number = 0
 
-  // Extract the quantity, origin, destination
+  // Extract the quantity, origin, and destination
   input[i]
     .trim()
     .split('\n')
     .map((a) => moveRegex.exec(a))
     .forEach((a) => {
       if (a) {
-        moves.quantity = parseInt(a[1])
-        moves.origin = parseInt(a[2])
-        moves.destination = parseInt(a[3])
+        quantity = parseInt(a[1])
+        origin = parseInt(a[2])
+        destination = parseInt(a[3])
       }
     })
+
+  let j: number = quantity
+  while (j) {
+    if (stacks[origin].size() !== 0) {
+      stacks[destination]?.push(stacks[origin]?.pop()!)
+    }
+    j--
+  }
 }
 
-// Loop through stacks
-// push top most crate to a string
-// return final answer, string of each crate on top of the stacks
+// stacks[7].push(stacks[3].pop())
+// stacks[7].push(stacks[3].pop())
+// stacks[7].push(stacks[3].pop())
+
+// stacks[9].push(stack[1].pop())
+// stacks[9].push(stacks[1].pop())
+// stacks[9].push(stacks[1].pop())
+// stacks[9].push(stacks[1].pop())
+
+// stacks[3].push(stacks[6].pop())
+// stacks[3].push(stacks[6].pop())
+// stacks[3].push(stacks[6].pop())
+// stacks[3].push(stacks[6].pop())
+// stacks[3].push(stacks[6].pop())
+
+let topStacks: string = ''
+
+for (let col in stacks) {
+  topStacks += stacks[col].peek()
+}
+
+console.log('topStacks', topStacks)
