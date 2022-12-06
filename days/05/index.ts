@@ -130,7 +130,7 @@ for (let i: number = 0; i < input.length; i++) {
 
   let j: number = quantity
   while (j) {
-    stacks[destination + 1]?.push(stacks[origin + 1]?.pop()!)
+    stacks[destination - 1]?.push(stacks[origin - 1]?.pop()!)
     j--
   }
 }
