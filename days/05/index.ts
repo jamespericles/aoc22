@@ -29,7 +29,6 @@ interface StackInterface<T> {
 }
 
 // The bottom of the stack is the zeroth index
-// repeat count?
 class Stack<T> implements StackInterface<T> {
   private storage: T[] = []
 
@@ -130,6 +129,7 @@ for (let i: number = 0; i < input.length; i++) {
 
   let j: number = quantity
   while (j) {
+    // Our stacks array starts with an index of 0, so each stack is shifted down by one
     stacks[destination - 1]?.push(stacks[origin - 1]?.pop()!)
     j--
   }
