@@ -23,13 +23,14 @@ const fs = require('fs')
 // Create a 2D array of numbers
 let input: number[][]
 input = fs
-  .readFileSync('test.txt', { encoding: 'utf-8' })
+  .readFileSync('input.txt', { encoding: 'utf-8' })
   .split('\n')
   .map((row: string) => row.split('').map((num: string) => parseInt(num)))
 
 type Direction = 'north' | 'south' | 'east' | 'west'
 
 // Create a 2D array class
+// Note, not every function included is used in the solution, this is the first time I've worked with a 2D array in typescript and wanted to play around with it
 class Matrix {
   private matrix: number[][]
   public length: number
@@ -41,10 +42,21 @@ class Matrix {
     this.height = matrix[0].length
   }
 
-  // Travel in a given direction, returning the first tree of greater height or null
-  travel(x: number, y: number, direction: Direction): number | null {
+  // Check if a given coordinate is on the border
+  isBorder(x: number, y: number): boolean {
+    return (
+      x === 0 ||
+      y === 0 ||
+      x === this.matrix[0].length - 1 ||
+      y === this.matrix.length - 1
+    )
+  }
+
+  // Print all numbers in a given direction
+  printDirection(x: number, y: number, direction: Direction): number[] {
     let currentX = x
     let currentY = y
+    let output: number[] = []
     switch (direction) {
       case 'north':
         currentY--
@@ -66,23 +78,37 @@ class Matrix {
       currentX >= this.matrix[0].length ||
       currentY >= this.matrix.length
     ) {
-      return null
+      return []
     }
 
-    if (this.matrix[currentY][currentX] > this.matrix[y][x]) {
-      return this.matrix[currentY][currentX]
-    }
+    output.push(this.matrix[currentY][currentX])
+    return output.concat(this.printDirection(currentX, currentY, direction))
+  }
 
-    return this.travel(currentX, currentY, direction)
+  visible(x: number, y: number, direction: Direction): boolean {
+    return this.printDirection(x, y, direction).every(
+      (num: number) => num < this.matrix[y][x]
+    )
+  }
+
+  // Visualize the matrix
+  print() {
+    for (let r: number = 0; r < this.matrix.length; r++) {
+      let row = ''
+      for (let c: number = 0; c < this.matrix[0].length; c++) {
+        row += this.matrix[r][c]
+      }
+      console.log(row)
+    }
   }
 
   // Travel in all directions, returning true if the tree is visible
   isVisible(x: number, y: number): boolean {
     return (
-      this.travel(x, y, 'north') === null ||
-      this.travel(x, y, 'south') === null ||
-      this.travel(x, y, 'east') === null ||
-      this.travel(x, y, 'west') === null
+      this.visible(x, y, 'north') ||
+      this.visible(x, y, 'south') ||
+      this.visible(x, y, 'east') ||
+      this.visible(x, y, 'west')
     )
   }
 }
