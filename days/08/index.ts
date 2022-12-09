@@ -18,6 +18,20 @@
     total: 16 on the edge + 5 interior = 21 total VISIBLE trees
  */
 
+/**
+ * Part 2 is a bit more complicated. Now, we need to determine the highest scenic score of a tree.
+ * The scenic score of a tree is the the distance to the nearest tree of equal or greater height in each direction, multiplied together.
+ * If a tree is not obscured in a direction, it's scenic score is how many trees it can see in that direction.
+ * 
+ * Example:
+ * Same example as above, but let's consider the middle 5 in the second to last row
+  30373
+  25512
+  65332
+  33549 the tree is obscured from the north by another five 2 spaces away. No block to the west, 2 trees visible. No blocks south, 1 tree visible. It is blocked by a nine 2 spaces away. Scenic score = 8 = (2 * 2 * 1 * 2)
+  35390
+*/
+
 const fs = require('fs')
 
 // Create a 2D array of numbers
@@ -40,6 +54,22 @@ class Matrix {
     this.matrix = matrix
     this.length = matrix.length
     this.height = matrix[0].length
+  }
+
+  // Visualize the matrix
+  print() {
+    for (let r: number = 0; r < this.matrix.length; r++) {
+      let row = ''
+      for (let c: number = 0; c < this.matrix[0].length; c++) {
+        row += this.matrix[r][c]
+      }
+      console.log(row)
+    }
+  }
+
+  // Get the value of a given coordinate
+  get(x: number, y: number): number {
+    return this.matrix[y][x]
   }
 
   // Check if a given coordinate is on the border
@@ -91,17 +121,6 @@ class Matrix {
     )
   }
 
-  // Visualize the matrix
-  print() {
-    for (let r: number = 0; r < this.matrix.length; r++) {
-      let row = ''
-      for (let c: number = 0; c < this.matrix[0].length; c++) {
-        row += this.matrix[r][c]
-      }
-      console.log(row)
-    }
-  }
-
   // Travel in all directions, returning true if the tree is visible
   isVisible(x: number, y: number): boolean {
     return (
@@ -111,16 +130,82 @@ class Matrix {
       this.visible(x, y, 'west')
     )
   }
-}
 
-const matrix = new Matrix(input)
-let counter = 0
-for (let r: number = 0; r < matrix.length; r++) {
-  for (let c: number = 0; c < matrix.height; c++) {
-    if (matrix.isVisible(r, c)) {
-      counter++
+  // Determine the distance from a given coordinate to the nearest tree of equal or greater height in a given direction or the border
+  distance(x: number, y: number, direction: Direction): number {
+    let currentX = x
+    let currentY = y
+    let distance = 0
+    switch (direction) {
+      case 'north':
+        currentY--
+        break
+      case 'south':
+        currentY++
+        break
+      case 'east':
+        currentX++
+        break
+      case 'west':
+        currentX--
+        break
     }
+
+    if (
+      currentX < 0 ||
+      currentY < 0 ||
+      currentX >= this.matrix[0].length ||
+      currentY >= this.matrix.length
+    ) {
+      return 0
+    }
+
+    if (this.matrix[currentY][currentX] >= this.matrix[y][x]) {
+      return 1
+    }
+
+    distance++
+    return distance + this.distance(currentX, currentY, direction)
+  }
+
+  // Determine the scenic score of a given coordinate
+  scenicScore(x: number, y: number): number {
+    return (
+      this.distance(x, y, 'north') *
+      this.distance(x, y, 'south') *
+      this.distance(x, y, 'east') *
+      this.distance(x, y, 'west')
+    )
+  }
+
+  // Return the number of trees that are visible (Solution for part 1)
+  countVisible(): number {
+    let counter = 0
+    for (let r: number = 0; r < this.matrix.length; r++) {
+      for (let c: number = 0; c < this.matrix[0].length; c++) {
+        if (this.isVisible(r, c)) {
+          counter++
+        }
+      }
+    }
+    return counter
+  }
+
+  // Determine the highest scenic score in the matrix (Solution for part 2)
+  highestScenicScore(): number {
+    let highest = 0
+    for (let r: number = 0; r < this.matrix.length; r++) {
+      for (let c: number = 0; c < this.matrix[0].length; c++) {
+        if (this.scenicScore(r, c) > highest) {
+          highest = this.scenicScore(r, c)
+        }
+      }
+    }
+    return highest
   }
 }
 
-console.log(counter)
+const matrix = new Matrix(input)
+
+console.log(matrix.countVisible())
+console.log(matrix.highestScenicScore())
