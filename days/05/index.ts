@@ -130,33 +130,33 @@ stacks.push(
 
 const moveRegex = /move (\d+) from (\d+) to (\d+)/
 
-// // Part 1
+// Part 1
 
-// for (let i: number = 0; i < input.length; i++) {
-//   let quantity: number = 0
-//   let origin: number = 0
-//   let destination: number = 0
+for (let i: number = 0; i < input.length; i++) {
+  let quantity: number = 0
+  let origin: number = 0
+  let destination: number = 0
 
-//   // Extract the quantity, origin, and destination
-//   input[i]
-//     .trim()
-//     .split('\n')
-//     .map((a) => moveRegex.exec(a))
-//     .forEach((a) => {
-//       if (a) {
-//         quantity = parseInt(a[1])
-//         origin = parseInt(a[2])
-//         destination = parseInt(a[3])
-//       }
-//     })
+  // Extract the quantity, origin, and destination
+  input[i]
+    .trim()
+    .split('\n')
+    .map((a) => moveRegex.exec(a))
+    .forEach((a) => {
+      if (a) {
+        quantity = parseInt(a[1])
+        origin = parseInt(a[2])
+        destination = parseInt(a[3])
+      }
+    })
 
-//   let j: number = quantity
-//   while (j) {
-//     // Our stacks array starts with an index of 0, so each stack is shifted down by one
-//     stacks[destination - 1]?.push(stacks[origin - 1]?.pop()!)
-//     j--
-//   }
-// }
+  let j: number = quantity
+  while (j) {
+    // Our stacks array starts with an index of 0, so each stack is shifted down by one
+    stacks[destination - 1]?.push(stacks[origin - 1]?.pop()!)
+    j--
+  }
+}
 
 let part1: string = ''
 for (let col in stacks) {
