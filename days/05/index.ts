@@ -31,6 +31,7 @@ interface StackInterface<T> {
 // The bottom of the stack is the zeroth index
 class Stack<T> implements StackInterface<T> {
   private storage: T[] = []
+  public moveRegex = /move (\d+) from (\d+) to (\d+)/
 
   constructor(private capacity: number = Infinity) {}
 
@@ -51,6 +52,26 @@ class Stack<T> implements StackInterface<T> {
 
   size(): number {
     return this.storage.length
+  }
+
+  // Move amount of items from one stack to another maintaining order
+  move(amount: number, origin: Stack<T>, destination: Stack<T>): void {
+    let j: number = amount
+    let payload: T[] = []
+
+    // Populate payload
+    while (j) {
+      payload.push(origin.pop()!)
+      j--
+    }
+
+    // Because we're working with a Cratemover 9001, the order of the items moved from one stack to another is maintained
+    // Therefore, we reverser our payload before pushing it to the destination stack
+    if (!j) {
+      payload.reverse().forEach((item) => {
+        destination.push(item)
+      })
+    }
   }
 
   init(inventory: T) {
@@ -109,6 +130,43 @@ stacks.push(
 
 const moveRegex = /move (\d+) from (\d+) to (\d+)/
 
+// // Part 1
+
+// for (let i: number = 0; i < input.length; i++) {
+//   let quantity: number = 0
+//   let origin: number = 0
+//   let destination: number = 0
+
+//   // Extract the quantity, origin, and destination
+//   input[i]
+//     .trim()
+//     .split('\n')
+//     .map((a) => moveRegex.exec(a))
+//     .forEach((a) => {
+//       if (a) {
+//         quantity = parseInt(a[1])
+//         origin = parseInt(a[2])
+//         destination = parseInt(a[3])
+//       }
+//     })
+
+//   let j: number = quantity
+//   while (j) {
+//     // Our stacks array starts with an index of 0, so each stack is shifted down by one
+//     stacks[destination - 1]?.push(stacks[origin - 1]?.pop()!)
+//     j--
+//   }
+// }
+
+let part1: string = ''
+for (let col in stacks) {
+  part1 += stacks[col].peek()
+}
+
+console.log('part1', part1)
+
+// Part 2
+
 for (let i: number = 0; i < input.length; i++) {
   let quantity: number = 0
   let origin: number = 0
@@ -127,18 +185,16 @@ for (let i: number = 0; i < input.length; i++) {
       }
     })
 
-  let j: number = quantity
-  while (j) {
-    // Our stacks array starts with an index of 0, so each stack is shifted down by one
-    stacks[destination - 1]?.push(stacks[origin - 1]?.pop()!)
-    j--
-  }
+  stacks[destination - 1]?.move(
+    quantity,
+    stacks[origin - 1],
+    stacks[destination - 1]
+  )
 }
 
-let topStacks: string = ''
-
+let part2: string = ''
 for (let col in stacks) {
-  topStacks += stacks[col].peek()
+  part2 += stacks[col].peek()
 }
 
-console.log('topStacks', topStacks)
+console.log('part2', part2)
